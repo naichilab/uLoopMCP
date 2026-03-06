@@ -11,28 +11,43 @@ namespace io.github.hatayama.uLoopMCP
     {
         private static readonly (string Pattern, string ApiName)[] DangerousPatterns =
         {
-            (@"\bSystem\.IO\b",                   "System.IO"),
-            (@"\bFile\.",                          "File"),
-            (@"\bDirectory\.",                     "Directory"),
-            (@"\bPath\.",                          "Path"),
-            (@"\bFileStream\b",                    "FileStream"),
-            (@"\bStreamWriter\b",                  "StreamWriter"),
-            (@"\bStreamReader\b",                  "StreamReader"),
-            (@"\bBinaryWriter\b",                  "BinaryWriter"),
-            (@"\bBinaryReader\b",                  "BinaryReader"),
-            (@"\bProcess\b",                       "Process"),
-            (@"\bSocket\b",                        "Socket"),
-            (@"\bWebClient\b",                     "WebClient"),
-            (@"\bHttpClient\b",                    "HttpClient"),
-            (@"\bHttpWebRequest\b",                "HttpWebRequest"),
-            (@"\bAssembly\.Load\b",                "Assembly.Load"),
-            (@"\bAssembly\.LoadFrom\b",            "Assembly.LoadFrom"),
-            (@"\bAssembly\.LoadFile\b",            "Assembly.LoadFile"),
-            (@"\bEnvironment\.Exit\b",             "Environment.Exit"),
-            (@"\bAssetDatabase\.CreateFolder\b",   "AssetDatabase.CreateFolder"),
-            (@"\bAssetDatabase\.DeleteAsset\b",    "AssetDatabase.DeleteAsset"),
-            (@"\bAssetDatabase\.MoveAsset\b",      "AssetDatabase.MoveAsset"),
-            (@"\bAssetDatabase\.CopyAsset\b",      "AssetDatabase.CopyAsset"),
+            // ファイルI/O
+            (@"\bSystem\.IO\b",                        "System.IO"),
+            (@"\bFile\.",                               "File"),
+            (@"\bDirectory\.",                          "Directory"),
+            (@"\bPath\.",                               "Path"),
+            (@"\bFileStream\b",                        "FileStream"),
+            (@"\bStreamWriter\b",                      "StreamWriter"),
+            (@"\bStreamReader\b",                      "StreamReader"),
+            (@"\bBinaryWriter\b",                      "BinaryWriter"),
+            (@"\bBinaryReader\b",                      "BinaryReader"),
+            (@"\bFileUtil\.",                           "FileUtil"),
+            // プロセス
+            (@"\bProcess\b",                           "Process"),
+            // ネットワーク
+            (@"\bSocket\b",                            "Socket"),
+            (@"\bTcpClient\b",                         "TcpClient"),
+            (@"\bUdpClient\b",                         "UdpClient"),
+            (@"\bNetworkStream\b",                     "NetworkStream"),
+            (@"\bWebClient\b",                         "WebClient"),
+            (@"\bHttpClient\b",                        "HttpClient"),
+            (@"\bHttpWebRequest\b",                    "HttpWebRequest"),
+            (@"\bWebRequest\b",                        "WebRequest"),
+            (@"\bUnityWebRequest\b",                   "UnityWebRequest"),
+            // リフレクション経由のアセンブリロード
+            (@"\bAssembly\.Load\b",                    "Assembly.Load"),
+            (@"\bAssembly\.LoadFrom\b",                "Assembly.LoadFrom"),
+            (@"\bAssembly\.LoadFile\b",                "Assembly.LoadFile"),
+            // 環境・システム
+            (@"\bEnvironment\.Exit\b",                 "Environment.Exit"),
+            // セキュリティレベルの自己昇格防止
+            (@"\bULoopSettings\b",                     "ULoopSettings"),
+            (@"\bDynamicCodeSecurityManager\b",        "DynamicCodeSecurityManager"),
+            // アセット破壊操作
+            (@"\bAssetDatabase\.CreateFolder\b",       "AssetDatabase.CreateFolder"),
+            (@"\bAssetDatabase\.DeleteAsset\b",        "AssetDatabase.DeleteAsset"),
+            (@"\bAssetDatabase\.MoveAsset\b",          "AssetDatabase.MoveAsset"),
+            (@"\bAssetDatabase\.CopyAsset\b",          "AssetDatabase.CopyAsset"),
         };
 
         /// <summary>

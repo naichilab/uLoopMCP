@@ -30,7 +30,12 @@ namespace io.github.hatayama.uLoopMCP
             _statistics = new ExecutionStatistics();
         }
 
-        /// <summary>Code Execution</summary>
+        /// <summary>
+        /// 同期版コード実行（非推奨）
+        /// Unityメインスレッドから呼ぶと AssemblyBuilder の buildFinished コールバックと
+        /// デッドロックする可能性があります。ExecuteCodeAsync() を使用してください。
+        /// </summary>
+        [System.Obsolete("Use ExecuteCodeAsync() instead. Calling from the Unity main thread may deadlock with AssemblyBuilder.buildFinished.")]
         public ExecutionResult ExecuteCode(
             string code,
             string className = DynamicCodeConstants.DEFAULT_CLASS_NAME,

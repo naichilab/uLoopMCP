@@ -62,7 +62,9 @@ namespace io.github.hatayama.uLoopMCP
 
                 TaskCompletionSource<CompilationResult> tcs = new TaskCompletionSource<CompilationResult>();
 
+#pragma warning disable CS0618 // AssemblyBuilder is obsolete in newer Unity versions
                 AssemblyBuilder builder = new AssemblyBuilder(dllPath, new[] { sourcePath });
+#pragma warning restore CS0618
                 builder.additionalReferences = references;
 
                 builder.buildFinished += (path, messages) =>

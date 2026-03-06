@@ -168,7 +168,7 @@ See examples at {project_root}/.claude/skills/uloop-execute-dynamic-code/example
                         looksLikeMissingReturn = executionResult.Logs.Any(l => l.Contains("CS0161") || l.Contains("CS0127") || l.Contains("must return a value"));
                     }
 
-                    if (looksLikeMissingReturn && string.IsNullOrEmpty(executionResult.UpdatedCode))
+                    if (looksLikeMissingReturn)
                     {
                         string codeWithReturn = AppendReturnIfMissing(originalCode);
                         ExecutionResult retryReturnResult = await _executor.ExecuteCodeAsync(
