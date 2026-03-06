@@ -7,7 +7,7 @@ namespace io.github.hatayama.uLoopMCP
 {
     /// <summary>
     /// UI section for security settings (test execution, menu items, dynamic code).
-    /// Controls dangerous MCP operations and Roslyn integration.
+    /// Controls dangerous MCP operations and dynamic code execution security level.
     /// </summary>
     public class SecuritySettingsSection
     {

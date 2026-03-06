@@ -6,19 +6,19 @@ namespace io.github.hatayama.uLoopMCP
 {
     /// <summary>
     /// Assembly Reference Policy Based on Security Level
-    /// Related Classes: DynamicCodeSecurityLevel, DangerousApiDetector, RoslynCompiler
-    /// 
+    /// Related Classes: DynamicCodeSecurityLevel, TextBasedDangerousApiChecker, UnityAssemblyBuilderCompilationService
+    ///
     /// Design Principles:
     /// - Disabled: No Assembly References (Compilation Not Allowed)
     /// - Restricted/FullAccess: All Assembly References Allowed (Compilation Possible)
-    /// - Security Checks Performed at Runtime by DangerousApiDetector
-    /// 
+    /// - Security Checks Performed at Compile Time by TextBasedDangerousApiChecker (Restricted mode)
+    ///
     /// Note:
-    /// - This class is declarative and is NOT consulted by RoslynCompiler when constructing
-    ///   MetadataReference collections for compilation.
-    /// - The actual reference set is built inside RoslynCompiler.InitializeReferencesForLevel.
-    /// - In Restricted mode, safety is enforced by post-compilation validation (SecurityValidator /
-    ///   DangerousApiDetector), rather than by filtering references at compile time.
+    /// - This class is declarative and is NOT consulted by UnityAssemblyBuilderCompilationService
+    ///   when constructing assembly references for compilation.
+    /// - The actual reference set is built inside UnityAssemblyBuilderCompilationService.GetAssemblyReferences().
+    /// - In Restricted mode, safety is enforced by pre-compile text-based validation (TextBasedDangerousApiChecker),
+    ///   not by filtering references at compile time.
     /// </summary>
     public static class AssemblyReferencePolicy
     {
