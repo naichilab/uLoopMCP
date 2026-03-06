@@ -64,7 +64,7 @@ namespace io.github.hatayama.uLoopMCP
                         McpConstants.ERROR_COMPILATION_DISABLED_LEVEL0,
                         McpConstants.ERROR_MESSAGE_COMPILATION_DISABLED_LEVEL0);
                 }
-                CompilationResult compilationResult = CompileCode(code, className, correlationId);
+                CompilationResult compilationResult = CompileCodeAsync(code, className, correlationId, cancellationToken).GetAwaiter().GetResult();
                 ExecutionResult compilationErrorResult = HandleCompilationResult(compilationResult, stopwatch);
                 if (compilationErrorResult != null) return compilationErrorResult;
 
@@ -222,7 +222,7 @@ namespace io.github.hatayama.uLoopMCP
                         McpConstants.ERROR_COMPILATION_DISABLED_LEVEL0,
                         McpConstants.ERROR_MESSAGE_COMPILATION_DISABLED_LEVEL0);
                 }
-                CompilationResult compilationResult = CompileCode(code, className, correlationId);
+                CompilationResult compilationResult = await CompileCodeAsync(code, className, correlationId, cancellationToken);
                 ExecutionResult compilationErrorResult = HandleCompilationResult(compilationResult, stopwatch);
                 if (compilationErrorResult != null) return compilationErrorResult;
 
@@ -340,7 +340,7 @@ namespace io.github.hatayama.uLoopMCP
             };
         }
 
-        private CompilationResult CompileCode(string code, string className, string correlationId)
+        private async Task<CompilationResult> CompileCodeAsync(string code, string className, string correlationId, CancellationToken ct = default)
         {
             CompilationRequest request = new CompilationRequest
             {
@@ -349,7 +349,7 @@ namespace io.github.hatayama.uLoopMCP
                 Namespace = DynamicCodeConstants.DEFAULT_NAMESPACE
             };
 
-            CompilationResult result = _compiler.Compile(request);
+            CompilationResult result = await _compiler.CompileAsync(request, ct);
 
             if (!result.Success)
             {

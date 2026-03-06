@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 using UnityEditor;
-using UnityEditor.Build;
 using UnityEngine;
 
 namespace io.github.hatayama.uLoopMCP
@@ -111,8 +108,6 @@ namespace io.github.hatayama.uLoopMCP
             ULoopSettingsData settings = GetSettings();
             ULoopSettingsData updated = settings with { dynamicCodeSecurityLevel = (int)level };
             SaveSettings(updated);
-
-            UpdateRoslynDefineSymbol(level);
 
             VibeLogger.LogInfo(
                 "editor_settings_security_level_changed",
@@ -261,111 +256,5 @@ namespace io.github.hatayama.uLoopMCP
             _cachedSettings = null;
         }
 
-        // Roslyn Define Symbol Management
-
-        /// <summary>
-        /// Symbol check and automatic addition after domain reload
-        /// </summary>
-        [InitializeOnLoadMethod]
-        private static void CheckRoslynSymbolOnDomainReload()
-        {
-            EditorApplication.delayCall += () =>
-            {
-                DynamicCodeSecurityLevel currentLevel = GetDynamicCodeSecurityLevel();
-                UpdateRoslynDefineSymbol(currentLevel);
-            };
-        }
-
-        private static void UpdateRoslynDefineSymbol(DynamicCodeSecurityLevel level)
-        {
-            string correlationId = McpConstants.GenerateCorrelationId();
-
-            NamedBuildTarget[] targets = GetAllKnownTargets();
-
-            foreach (NamedBuildTarget target in targets)
-            {
-                string currentSymbols = PlayerSettings.GetScriptingDefineSymbols(target);
-                List<string> symbols = currentSymbols
-                    .Split(';')
-                    .Where(s => !string.IsNullOrEmpty(s))
-                    .ToList();
-
-                bool hasRoslynSymbol = symbols.Contains(McpConstants.SCRIPTING_DEFINE_ULOOPMCP_HAS_ROSLYN);
-                bool shouldAddSymbol = level != DynamicCodeSecurityLevel.Disabled;
-
-                // Add symbol only for levels other than Disabled, when symbol does not yet exist
-                // Do not remove symbol when changing to Disabled (as per specification)
-                if (shouldAddSymbol && !hasRoslynSymbol)
-                {
-                    symbols.Add(McpConstants.SCRIPTING_DEFINE_ULOOPMCP_HAS_ROSLYN);
-                    string newSymbols = string.Join(";", symbols);
-                    PlayerSettings.SetScriptingDefineSymbols(target, newSymbols);
-
-                    VibeLogger.LogInfo(
-                        "roslyn_symbol_added_to_platform",
-                        $"Added {McpConstants.SCRIPTING_DEFINE_ULOOPMCP_HAS_ROSLYN} to {target}",
-                        new {
-                            platform = target.ToString(),
-                            symbols = newSymbols,
-                            level = level.ToString()
-                        },
-                        correlationId: correlationId,
-                        humanNote: $"Activate Roslyn functionality on {target} platform",
-                        aiTodo: "Verify symbol addition per platform"
-                    );
-                }
-            }
-        }
-
-        private static NamedBuildTarget[] GetAllKnownTargets()
-        {
-            List<NamedBuildTarget> targets = new();
-
-            BuildTargetGroup activeGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
-            if (activeGroup == BuildTargetGroup.Unknown)
-            {
-                activeGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
-            }
-
-            if (activeGroup != BuildTargetGroup.Unknown)
-            {
-                NamedBuildTarget activeTarget = NamedBuildTarget.FromBuildTargetGroup(activeGroup);
-                if (!targets.Contains(activeTarget))
-                {
-                    targets.Add(activeTarget);
-                }
-            }
-            else
-            {
-                if (!targets.Contains(NamedBuildTarget.Standalone))
-                {
-                    targets.Add(NamedBuildTarget.Standalone);
-                }
-            }
-
-            NamedBuildTarget[] candidateTargets = new[]
-            {
-                NamedBuildTarget.Standalone,
-                NamedBuildTarget.Server,
-                NamedBuildTarget.iOS,
-                NamedBuildTarget.Android,
-                NamedBuildTarget.WebGL,
-                NamedBuildTarget.WindowsStoreApps,
-                NamedBuildTarget.tvOS,
-                NamedBuildTarget.PS4,
-                NamedBuildTarget.XboxOne,
-            };
-
-            foreach (NamedBuildTarget target in candidateTargets)
-            {
-                string symbols = PlayerSettings.GetScriptingDefineSymbols(target);
-                if (!string.IsNullOrEmpty(symbols) && !targets.Contains(target))
-                {
-                    targets.Add(target);
-                }
-            }
-
-            return targets.ToArray();
-        }
     }
 }
